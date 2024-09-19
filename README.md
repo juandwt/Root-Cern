@@ -4,28 +4,87 @@
   <img width="800" height="290" src="rootlogo.png">
 </p>
 
-## My fiist graph in Root 
+## Add histograms 
 
 ```cpp
-#include <TCanvas.h>     // Incluye la clase TCanvas para crear lienzos gráficos.
-#include <TF1.h>         // Incluye la clase TF1 para definir y dibujar funciones matemáticas.
-#include <TApplication.h> // Incluye la clase TApplication para gestionar la aplicación ROOT.
-#include <TGraph2D.h>
-#include <TH3F.h>
-#include <TMath.h>
-#include <TRandom.h>
-#include <TColor.h>
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TRandom3.h>
+#include <TF1.h> 
+#include <TLegend.h>
 
+void Double_slick() {
+  
+  TLegend *leg = new TLegend(0.7, 0.7, 0.9, 0.9);  
+  TCanvas *canvas  = new TCanvas("canvas", "Histogram Canvas", 900, 500); 
 
-void Canvas(){
-    TCanvas *C = new TCanvas("C", "Canvas", 800, 500);
-    TF1 *sineFunc = new TF1("sineFunc", "sin(x)", -2*TMath::Pi(), 2*TMath::Pi());
-    sineFunc->Draw();
-    sineFunc->SetLineColor(kBlue);
-    sineFunc->SetLineWidth(2);
-    //C->Draw();
+  TH1F *histogram1  = new TH1F("histogram", "Histogram's Fit", 100, -30, 120);
+  TH1F *histogram2 = new TH1F("histogram2", "Random Numbers Histogram 2", 100, -30, 120);
+  TH1F *histogramSum = new TH1F("histogramsum", "Random Numbers Histogram Sum", 100, -30, 120);
+  
+  histogram1->SetStats(kFALSE);
+  histogram2->SetStats(kFALSE);
+  histogramSum->SetStats(kFALSE);
+
+  TRandom3 randomGenerator; 
+  TRandom3 randomGenerator2;
+
+  double randomNumber = 0;
+  double randomNumber2 = 0;
+
+  for (int i = 0; i < 3000; ++i) {
+    randomNumber = randomGenerator.Gaus(20, 10); 
+    histogram1->Fill(randomNumber);
+  } 
+
+  for (int i = 0; i < 3000; ++i){
+    randomNumber2 = randomGenerator.Gaus(60, 10);
+    histogram2->Fill(randomNumber2);
+  }
+
+  histogramSum->Add(histogram1);
+  histogramSum->Add(histogram2);
+
+  TF1 *gaussFit = new TF1("gaussFit", "gaus", -50, 120);
+  histogram1->Fit(gaussFit, "R");
+
+  TF1 *gaussFit2 = new TF1("gaussFit2", "gaus", -50, 120);
+  histogram2->Fit(gaussFit2, "R");
+
+  TF1 *gaussFit3 = new TF1("gaussFit3", "gaus", -50, 120);
+  histogramSum->Fit(gaussFit3, "R");
+
+  gaussFit->SetLineColor(kBlue);
+  gaussFit2->SetLineColor(kGreen);
+  gaussFit3->SetLineColor(kRed);
+
+  histogram1->Draw();
+  histogram2->Draw("SAME");
+  histogramSum->Draw("SAME");
+
+  gaussFit->Draw("SAME");
+  gaussFit2->Draw("SAME");
+  gaussFit3->Draw("SAME");
+
+ leg->AddEntry(histogram1, "Histogram 1", "l");
+ leg->AddEntry(gaussFit, "Ajuste 1", "l");
+ leg->AddEntry(histogram2, "Histogram 2", "l");
+ leg->AddEntry(gaussFit2, "Ajuste 2", "l");
+ leg->AddEntry(histogramSum, "Sum Histogram", "l");
+ leg->AddEntry(gaussFit3, "Ajuste Sum", "l");
+
+ // Dibujar la leyenda una sola vez
+ leg->Draw();
 }
+
 ```
+
+<p align="center">
+  <img width="800" height="290" src="histogramsadd.jpg">
+</p>
+
+
+
 ## Roofit  Gaus + Pol
 
 ```cpp
