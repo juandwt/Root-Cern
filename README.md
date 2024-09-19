@@ -159,6 +159,10 @@ The result of the code is:
 
 ##  hresid and hpull
 
+- **Residual**: It is the difference between the observed values and the values predicted by the model. It indicates how well the model fits the data. In the code, it is calculated using `RooHist *hresid = xframe->residHist();`.
+
+- **Pull**: It is the normalized residual, calculated by dividing the residual by the uncertainty of the fit. Pull values are expected to be within \(-3\) to \(3\) sigmas in an ideal fit, suggesting a good adjustment. If they are outside this range, it may indicate problems with the model or the presence of outliers. In the code, it is calculated using `RooHist *hpull = xframe->pullHist();`.
+
 ```cpp
 #include "RooRealVar.h"
 #include "RooDataSet.h"
