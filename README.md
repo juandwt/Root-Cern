@@ -95,7 +95,7 @@ void ajuste2(){
 The result of the code is:
 
 <p align="center">
-  <img width="700" height="300" src="/Images/gaus+pol.jpg">
+  <img width="700" height="300" src="/Images/gauus+pol.jpg">
 </p>
 
 
