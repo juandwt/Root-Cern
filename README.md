@@ -98,6 +98,13 @@ The result of the code is:
   <img width="700" height="400" src="/Images/Gaus + Pol.png">
 </p>
 
+<p align="center">
+  <iframe src="/Images/imagen.pdf" width="700" height="400">
+    Este navegador no soporta PDFs. 
+    Puedes descargar el PDF <a href="/Images/imagen.pdf">aquí</a>.
+  </iframe>
+</p>
+
 
 
 ```cpp
