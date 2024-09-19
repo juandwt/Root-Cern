@@ -154,7 +154,7 @@ void ajuste2(){
 The result of the code is:
 
 <p align="center">
-  <img width="700" height="300" src="/Images/gauus+pol.jpg">
+  <img width="700" height="280" src="/Images/gauus+pol.jpg">
 </p>
 
 ##  hresid and hpull
