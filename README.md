@@ -98,6 +98,7 @@ The result of the code is:
   <img width="700" height="300" src="/Images/gauus+pol.jpg">
 </p>
 
+##  hresid and hpull
 
 ```cpp
 #include "RooRealVar.h"
@@ -139,39 +140,38 @@ void ajuste2(){
     data->plotOn(xframe);
     
     model.plotOn(xframe, Normalization(1.0, RooAbsReal::RelativeExpected), LineColor(kRed));
-    
     model.plotOn(xframe, Components(bkg), LineStyle(kDashed), Normalization(1.0, RooAbsReal::RelativeExpected), LineColor(kGreen));
     model.plotOn(xframe, Components(RooArgSet(sig1)), LineStyle(kDotted), Normalization(1.0, RooAbsReal::RelativeExpected));
 
+    // Calcular el residuo 
     RooHist *hresid = xframe->residHist();
+
+    // Calcular el pull
     RooHist *hpull  = xframe->pullHist();
 
-    // Graficar el residual
-    RooPlot* frame2 = x.frame(Title("Residual Distribution"));
-    
+    //Graficar el residuo
+    RooPlot* frame2 = x.frame(Title("Residual Distribution"));    
     frame2->addPlotable(hresid, "P");
 
-    // Agregar sig1 al gráfico de residuales
     sig1.plotOn(frame2, LineColor(kBlue), LineStyle(kDotted));
 
+    // graficar el pull
     RooPlot* frame3 = x.frame(Title("Pull Distribution"));
     frame3->addPlotable(hpull, "P");
     
-    // Crear el canvas
     TCanvas *c = new TCanvas("residual", "residual", 1200, 450);
     c->Divide(3);
     
-    // Graficar el ajuste completo
     c->cd(1);
     xframe->Draw();
-
-    // Graficar los residuales con sig1
     c->cd(2);
     frame2->Draw();
-
-    // Graficar la distribución "pull"
     c->cd(3);
     frame3->Draw();
 }
 ```
+The result of the code is:
 
+<p align="center">
+  <img width="700" height="300" src="/Images/pullandresid.jpg">
+</p>
