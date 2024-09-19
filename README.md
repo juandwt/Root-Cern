@@ -26,7 +26,72 @@ void Canvas(){
     //C->Draw();
 }
 ```
-## Ajuste lineal 
+## Roofit  Gaus + Pol
+
+```cpp
+#include "RooRealVar.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooChebychev.h"
+#include "RooAddPdf.h"
+#include "RooExtendPdf.h"
+#include "TCanvas.h"
+#include "TAxis.h"
+#include "RooPlot.h"
+
+using namespace RooFit;
+
+void ajuste2(){
+ 
+    // Dominio 
+    RooRealVar x("x", "x", 0, 10);
+    
+    // Parametros de la función gauss (media, desviacion)
+    RooRealVar mean("mean", "mean of gaussians", 5);
+    RooRealVar sigma1("sigma1", "width of gaussians", 0.5);
+
+    // Creación de la señal gausiana
+    RooGaussian sig1("sig1", "Signal component 1", x, mean, sigma1);
+
+    // Parametros del polinomio
+    RooRealVar a0("a0", "a0", -1);
+    RooRealVar a1("a1", "a1", -0.2, -1, 0.1);
+
+    // Creación del polinomio Chebychev p(x) = a0 + a1*x
+    RooChebychev bkg("bkg", "Background", x, RooArgSet(a0, a1));
+   
+    // Definición de una variable real para la fracción del componente 1 en la señal
+    RooRealVar sig1frac("sig1frac", "fraction of component 1 in signal", 0.8, 0., 1.);
+    RooAddPdf sig("sig", "Signal", RooArgList(sig1), sig1frac);
+    
+    // Definición de una variable real para el número de eventos de señal
+    RooRealVar nsig("nsig", "number of signal events", 500, 0, 10000);
+    RooRealVar nbkg("nbkg", "number of background events", 500, 0, 10000);
+    
+    // Creación del modelo total que combina el fondo y la señal con sus respectivas cantidades
+    RooAddPdf model("model", "(g1)+a", RooArgList(bkg, sig), RooArgList(nbkg, nsig));
+    
+    // Generación de un conjunto de datos basado en el modelo
+    RooDataSet *data = model.generate(x);
+    
+    // Ajuste del modelo a los datos generados
+    model.fitTo(*data);
+    
+    // Creación de un marco para graficar
+    RooPlot* xframe = x.frame(Title("Gauss + Pol"));
+    
+    data->plotOn(xframe);
+ 
+    // Grafiar polinomio, gausiana y el modelo ajusatdo
+    model.plotOn(xframe, Normalization(1.0, RooAbsReal::RelativeExpected), LineColor(kRed));
+    model.plotOn(xframe, Components(bkg), LineStyle(kDashed), Normalization(1.0, RooAbsReal::RelativeExpected), LineColor(kGreen));
+    model.plotOn(xframe, Components(RooArgSet(sig1)), LineStyle(kDotted), Normalization(1.0, RooAbsReal::RelativeExpected));
+    
+    TCanvas *c = new TCanvas("residual", "residual", 800, 450);
+    xframe->Draw();
+    c->SaveAs("Gaus + Pol.png");
+}
+```
 
 ```cpp
 #include "RooRealVar.h"
