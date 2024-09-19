@@ -92,6 +92,13 @@ void ajuste2(){
     c->SaveAs("Gaus + Pol.png");
 }
 ```
+The result of the code is:
+
+<p align="center">
+  <img with="150" height="290" src="/Images/Gaus + Pol.png">
+</p>
+
+
 
 ```cpp
 #include "RooRealVar.h"
