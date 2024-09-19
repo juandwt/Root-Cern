@@ -1,7 +1,7 @@
 # Root-Cern
 
 <p align="center">
-  <img width="150" height="290" src="rootlogo.png">
+  <img width="800" height="290" src="rootlogo.png">
 </p>
 
 ## My fiist graph in Root 
