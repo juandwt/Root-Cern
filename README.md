@@ -239,7 +239,7 @@ The result of the code is:
   <img width="1000" height="270" src="/Images/pullandresid.jpg">
 </p>
 
-## Revisa esto :*
+## Corrección 
 
 ```cpp
 #include "RooRealVar.h"
