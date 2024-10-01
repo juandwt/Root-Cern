@@ -238,3 +238,100 @@ The result of the code is:
 <p align="center">
   <img width="1000" height="270" src="/Images/pullandresid.jpg">
 </p>
+
+$$ Revisa esto :*
+
+```cpp
+#include "RooRealVar.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooChebychev.h"
+#include "RooAddPdf.h"
+#include "RooExtendPdf.h"
+#include "TCanvas.h"
+#include "TAxis.h"
+#include "RooPlot.h"
+
+using namespace RooFit;
+
+void ajuste2(){
+    
+    // ==================================
+    // Definition of functions and signal
+    // ==================================
+
+    RooRealVar x("x", "x", 0, 10);
+
+    RooRealVar mean("mean", "mean of gaussians", 5);
+    RooRealVar sigma1("sigma1", "width of gaussians", 0.5);
+
+    RooGaussian sig1("sig1", "Signal component 1", x, mean, sigma1);
+
+    RooRealVar a0("a0", "a0", -1);
+    RooRealVar a1("a1", "a1", -0.2, -1, 0.1);
+    RooChebychev bkg("bkg", "Background", x, RooArgSet(a0, a1));
+   
+    RooRealVar sig1frac("sig1frac", "fraction of component 1 in signal", 0.8, 0., 1.);
+    RooAddPdf sig("sig", "Signal", RooArgList(sig1), sig1frac);
+
+    RooRealVar nsig("nsig", "number of signal events", 500, 0, 10000);
+    RooRealVar nbkg("nbkg", "number of background events", 500, 0, 10000);
+   
+   // Model 
+
+    RooAddPdf model("model", "(g1)+ a", RooArgList(bkg, sig), RooArgList(nbkg, nsig));
+    
+    RooDataSet *data = model.generate(x);
+    
+    model.fitTo(*data);
+
+
+    RooPlot* xframe = x.frame(Title("Gauss + Pol"));
+    RooPlot* frame2 = x.frame(Title("Residual Distribution"));    
+    RooPlot* frame3 = x.frame(Title("Pull Distribution"));
+
+    // ======== 
+    // Graph 1
+    // ========
+
+    data->plotOn(xframe);
+    model.plotOn(xframe, Normalization(1.0, RooAbsReal::RelativeExpected), LineColor(kBlue));
+
+    
+    // ======== 
+    // Graph 2
+    // ========
+
+    RooHist *hresid = xframe->residHist();
+
+    frame2->addPlotable(hresid, "P");
+    model.plotOn(frame2, Normalization(1.0, RooAbsReal::RelativeExpected), Components("sig"), LineStyle(kDotted), LineColor(kRed));
+
+    // ======== 
+    // Graph 3
+    // ========
+
+    RooHist *hpull  = xframe->pullHist();
+    frame3->addPlotable(hpull, "P");
+
+    // ====== 
+    // Canvas 
+    // ======
+
+    TCanvas *c = new TCanvas("residual", "residual", 1200, 450);
+    c->Divide(3);
+
+    
+    c->cd(1);
+    xframe->Draw();
+    
+    c->cd(2);
+    frame2->Draw();
+    
+    c->cd(3);
+    frame3->Draw();
+}
+```
+
+
+
