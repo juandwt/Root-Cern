@@ -1,6 +1,6 @@
 # Table of Contents
 
-- [My fisrt Grahp in ROOT](#My fisrt graph in ROOT)
+- [My first graph in ROOT](#My fisrt graph in ROOT)
 
 
 
@@ -10,6 +10,9 @@
   - [Roofit Gaus + Pol](#roofit-gaus--pol)
   - [hresid and hpull](#hresid-and-hpull)
   - [Corrección](#corrección)
+
+
+# My first graph in ROOT
 
 
 
