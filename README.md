@@ -1,7 +1,10 @@
 # Table of Contents
 
 - [My first graph in ROOT](#My-fisrt-graph-in-ROOT)
-
+  - [Graph in 2D](#Graph-in-2D)
+  - [Graph in 3D](#Graph-in-3D)
+  - [Histogram in 2D and 3D](#Histogram-in-2D-and-3D)
+    
 
 
 
