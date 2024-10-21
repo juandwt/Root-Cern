@@ -1,6 +1,6 @@
 # Table of Contents
 
-- [My first graph in ROOT](#My fisrt graph in ROOT)
+- [My first graph in ROOT](#My-fisrt-graph-in-ROOT)
 
 
 
