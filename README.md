@@ -354,5 +354,39 @@ void ajuste2(){
 }
 ```
 
+## Decaimientos y coliciones 
 
+
+```cpp
+#include <TRandom.h>
+#include <TH1F.h>
+#include <TLorentzVector.h>
+#include <TGenPhaseSpace.h>
+
+
+void PhaseSpace_2() {
+    TRandom random(10000);
+    TLorentzVector W(0.0, 0.0, 0.0, 939.565); // px py pz E/C
+    Double_t masses[2] = {908.27, 0.51};
+
+    TGenPhaseSpace event;
+    event.SetDecay(W, 2, masses);
+
+    TH1F *h1 = new TH1F("h1", "h1", 100, 935, 945);
+
+    for (Int_t n = 0; n < 100000; n++) {
+        Double_t weight = event.Generate();
+        
+        TLorentzVector *pProton = event.GetDecay(0);   // (px, py, pz, E/C)
+        TLorentzVector *pElectron = event.GetDecay(1); // (px, py, pz, E/C)
+        
+        TLorentzVector pNeutron = *pProton + *pElectron;
+        double r = random.BreitWigner(0, 0.0005);
+
+        // Masa invariante
+        h1->Fill((1 + r) * pNeutron.M());
+    }
+    h1->Draw();
+}
+```
 
