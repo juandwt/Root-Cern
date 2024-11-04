@@ -390,3 +390,8 @@ void PhaseSpace_2() {
 }
 ```
 
+$$ 
+n \longrightarrow p + e + \nu
+$$
+
+
