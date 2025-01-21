@@ -564,6 +564,6 @@ void ajuste_espectro() {
 ```
 
 <p align="center">
-  <img width="1000" height="270" src="/Images/Ajuste_Espectro.jpg">
+  <img width="1000" height="300" src="/Images/Ajuste_Espectro.jpg">
 </p>
 
