@@ -390,8 +390,180 @@ void PhaseSpace_2() {
 }
 ```
 
-$$ 
-n \longrightarrow p + e + \nu
-$$
+## Ajuste de masa de Lambda(2880)
 
+```cpp
+#include "RooRealVar.h"
+#include "RooDataSet.h"
+#include "RooGaussian.h"
+#include "RooChebychev.h"
+#include "RooAddPdf.h"
+#include "RooExtendPdf.h"
+#include "RooDataHist.h"
+#include "TCanvas.h"
+#include "RooPlot.h"
+#include "TH1F.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TLorentzVector.h"
+#include "TAxis.h"
+
+using namespace RooFit ;
+using namespace RooStats ;
+
+void plot_tree(){
+    TFile * f = new TFile("r2.root","READ");
+    TTree* tree1 = (TTree*)f->Get("tree");
+
+    Double_t  D_PX;
+    Double_t  D_PY;
+    Double_t  D_PZ;
+    Double_t  P_PX;
+    Double_t  P_PY;
+    Double_t  P_PZ;
+    Double_t  E_P;
+    Double_t  E_D;
+
+    // Mass
+    
+    Double_t M_P;
+    Double_t M_D;
+
+    tree1->SetBranchAddress("P_PX", &P_PX);
+    tree1->SetBranchAddress("P_PY", &P_PY);
+    tree1->SetBranchAddress("P_PZ", &P_PZ);
+    tree1->SetBranchAddress("D_PX", &D_PX);
+    tree1->SetBranchAddress("D_PY", &D_PY);
+    tree1->SetBranchAddress("D_PZ", &D_PZ);
+    
+
+    int nbins=45;
+
+    TH1F * DOp = new TH1F("DOp","Espectro de Masa", nbins, 2830, 2910);
+    DOp->Sumw2();
+
+    Int_t nentries = (Int_t)tree1->GetEntries();
+
+    // Gausiana
+    
+    RooRealVar x("x", "x", 2830, 2910);
+    RooRealVar mean("mean", "mean of gaussians", 5);
+    RooRealVar sigma("sigma", "width of gaussians", 0.1);
+    RooGaussian gauss("gauss", "gauss(x, mena, sigma)", x, mean, sigma);
+    
+    RooPlot* frame  = x.frame(Title("Gauss + Pol"));
+    
+    for (Int_t i=0; i< nentries;i++) {
+
+          Double_t  E_P;
+          Double_t  E_D;
+
+          E_P = sqrt(P_PX*P_PX + P_PY*P_PY + P_PZ*P_PZ  + pow(938, 2));
+          E_D = sqrt(D_PX*D_PX + D_PY*D_PY + D_PZ*D_PZ  + pow(1860, 2));
+
+          TLorentzVector  D(D_PX, D_PY, D_PZ, E_D);
+          TLorentzVector  p(P_PX, P_PY, P_PZ, E_P);
+          TLorentzVector  P_T = D + p;         
+         
+          tree1->GetEntry(i);
+          DOp->Fill(P_T.M());       
+    }
+
+    DOp->Draw();
+}
+
+void ajuste_espectro() {
+    // Carga el archivo ROOT y el árbol
+    TFile* f = new TFile("r2.root", "READ");
+    TTree* tree1 = (TTree*)f->Get("tree");
+
+    Double_t D_PX, D_PY, D_PZ, P_PX, P_PY, P_PZ;
+    tree1->SetBranchAddress("P_PX", &P_PX);
+    tree1->SetBranchAddress("P_PY", &P_PY);
+    tree1->SetBranchAddress("P_PZ", &P_PZ);
+    tree1->SetBranchAddress("D_PX", &D_PX);
+    tree1->SetBranchAddress("D_PY", &D_PY);
+    tree1->SetBranchAddress("D_PZ", &D_PZ);
+
+    // Crear el histograma
+    int nbins = 45;
+    TH1F* DOp = new TH1F("DOp", "Espectro de Masa", nbins, 2830, 2910);
+    DOp->Sumw2();
+
+    Int_t nentries = tree1->GetEntries();
+    for (Int_t i = 0; i < nentries; i++) {
+        tree1->GetEntry(i);
+
+        Double_t E_P = sqrt(P_PX * P_PX + P_PY * P_PY + P_PZ * P_PZ + pow(938, 2));
+        Double_t E_D = sqrt(D_PX * D_PX + D_PY * D_PY + D_PZ * D_PZ + pow(1860, 2));
+
+        TLorentzVector D(D_PX, D_PY, D_PZ, E_D);
+        TLorentzVector p(P_PX, P_PY, P_PZ, E_P);
+        TLorentzVector P_T = D + p;
+
+        DOp->Fill(P_T.M());
+    }
+
+    RooRealVar x("x", "Masa Invariante", 2840, 2910);
+    RooDataHist data("data", "Dataset from DOp", x, Import(*DOp));
+    
+    RooRealVar mean("mean", "mean of Gaussian", 2840, 2840, 2910);
+    RooRealVar sigma("sigma", "width of Gaussian", 10, 0.1, 50);
+    RooGaussian signal("signal", "Gaussian Signal", x, mean, sigma);
+
+    RooRealVar mean2("mean2", "mean of Gaussian", 2840, 2850, 2860);
+    RooRealVar sigma2("sigma2", "width of Gaussian", 10, 0.0001, 50);
+    RooGaussian signal2("signal2", "Gaussian Signal2", x, mean2, sigma2);
+
+
+    RooRealVar a0("a0", "a0", 0, -1, 1);
+    RooRealVar a1("a1", "a1", 0, -1, 1);
+    RooRealVar a2("a2", "a2", 0, -1, 1);
+    RooRealVar a3("a3", "a3", 0, -1, 1);
+    //RooChebychev background("background", "Polynomial Background", x, RooArgList(a0, a1, a2, a3));
+
+    RooRealVar tau("tau", "tau", 0, -1, 1);  // El parámetro tau debe ser negativo para un decaimiento
+    RooExponential background("background", "Exponential Background", x, tau);
+
+
+    RooRealVar nsig("nsig", "number of signal events", 500, 0, 100000);
+    RooRealVar nbkg("nbkg", "number of background events", 500, 0, 100000);
+    RooAddPdf model("model", "signal + background", RooArgList(signal, background), RooArgList(nsig, nbkg));
+
+    model.fitTo(data);
+
+    RooPlot* frame  = x.frame(Title("Componentes"));
+    RooPlot* frame2 = x.frame(Title("Ajuste del Espectro"));
+    RooPlot* frame3 = x.frame(Title("Pull Distribution"));
+
+    data.plotOn(frame2);
+
+    model.plotOn(frame2, LineColor(kRed));
+    model.plotOn(frame, Components(signal), LineStyle(kDashed), LineColor(kBlue));
+    model.plotOn(frame, Components(background), LineStyle(kDotted), LineColor(kGreen));
+
+
+    RooHist *hpull  = frame2->pullHist();
+    frame3->addPlotable(hpull, "P");
+
+    
+    TCanvas* c = new TCanvas("c", "Ajuste del Espectro", 1200, 450);
+    c->Divide(3);
+
+    c->cd(1);
+    frame->Draw();
+
+    c->cd(2);
+    frame2->Draw();
+
+    c->cd(3);
+    frame3->Draw();
+
+    c->SaveAs("Ajuste_Espectro.png");
+}
+```
+
+<p align="center">
+  <img width="1000" height="270" src="/Images/Ajuste_Espectro.png">
+</p>
 
