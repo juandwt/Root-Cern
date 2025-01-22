@@ -567,3 +567,53 @@ void ajuste_espectro() {
   <img width="980" height="300" src="/Images/Ajuste_Espectro.jpg">
 </p>
 
+
+
+## Daliz Plot
+
+```cpp
+#include <TRandom.h>
+#include <TH1F.h>
+#include <TLorentzVector.h>
+#include <TGenPhaseSpace.h>
+
+
+void PhaseSpace_2() {
+    TRandom random(10000);
+
+    TLorentzVector W(0.0, 0.0, 0.0, 1.868); // px py pz E/C
+    Double_t masses[3] = {0.139, 0.139, 0.139};
+
+    TGenPhaseSpace event;
+    event.SetDecay(W, 3, masses);
+
+    TH2F *h1 = new TH2F("h1", "h1", 50, 0, 3.5, 50, 0, 3.5);
+    TH1F *h2 = new TH1F("h2", "h2", 50, 0, 3.5);
+
+    for (Int_t n = 0; n < 100000; n++) {
+        Double_t weight = event.Generate();
+        
+        TLorentzVector *pPion_1 = event.GetDecay(0);   // (px, py, pz, E/C)
+        TLorentzVector *pPion_2 = event.GetDecay(1);   // (px, py, pz, E/C)
+        TLorentzVector *pPion_3 = event.GetDecay(2);   // (px, py, pz, E/C)
+        
+        TLorentzVector m_12 = *pPion_1 + *pPion_2;
+        TLorentzVector m_13 = *pPion_1 + *pPion_3;
+     
+
+        cout<<m_12.M()<<" "<<m_13.M()<<endl;
+        h1->Fill(m_12.M2(), m_13.M2(), weight);
+        h2->Fill(m_12.M2(), weight);
+    }
+
+    h2->Draw();
+}
+
+
+```
+
+
+<p align="center">
+  <img width="980" height="300" src="/Images/Ajuste_Espectro.jpg">
+</p>
+
