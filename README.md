@@ -22,7 +22,7 @@
 # Root-Cern
 
 <p align="center">
-  <img width="800" height="250" src="rootlogo.jpg">
+  <img width="800" height="250" src="/Images/rootlogo.jpg">
 </p>
 
 ## Add histograms 
