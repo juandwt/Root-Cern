@@ -614,6 +614,6 @@ void PhaseSpace_2() {
 
 
 <p align="center">
-  <img width="400" height="300" src="/Images/daliz.jpg">
+  <img width="500" height="300" src="/Images/daliz.jpg">
 </p>
 
