@@ -6,8 +6,6 @@
   - [Histogram in 2D and 3D](#Histogram-in-2D-and-3D)
     
 
-
-
 - [Root-Cern](#root-cern)
   - [Add histograms](#add-histograms)
   - [Roofit Gaus + Pol](#roofit-gaus--pol)
