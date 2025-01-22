@@ -13,6 +13,8 @@
   - [Roofit Gaus + Pol](#roofit-gaus--pol)
   - [hresid and hpull](#hresid-and-hpull)
   - [Corrección](#corrección)
+  - [Ajuste de masa de Lambda(2880)](#Ajuste de masa de Lambda(2880))
+  - [Daliz Plot](#Daliz Plot)
 
 
 # My first graph in ROOT
